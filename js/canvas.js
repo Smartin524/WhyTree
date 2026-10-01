@@ -18,6 +18,8 @@
     const els = new Map();     // 节点 id → DOM
     let autoPos = {};          // 自动布局结果（节点世界坐标）
     let box = { x0: 0, y0: 0, k: 1, offX: MARGIN, offY: MARGIN };   // 当前缩放与偏移
+    const listeners = [];      // 布局/选中状态变化时通知（导航条用）
+    const emit = () => listeners.forEach((fn) => fn());
 
     // ---------- 渲染 ----------
     function renderNode(n, hasChildren) {
@@ -73,6 +75,7 @@
         if (fold) fold.textContent = state.collapsed.has(n.id) ? "+" + state.graph.childrenOf(n.id).length : "−";
       }
       drawEdges(focusSet);
+      emit();
     }
 
     function drawEdges(focusSet = state.selected ? state.graph.related(state.selected) : null) {
@@ -120,6 +123,7 @@
     function updateSize(b = visibleBounds()) {
       if (!b) return;
       sizer.style.width = (b.x1 - b.x0) * box.k + 2 * MARGIN + opts.getInset() + "px";
+      emit();
     }
 
     /** 把某节点水平滚动到可见区域（面板之外）的中间 */
@@ -182,6 +186,24 @@
     // ---------- 对外 ----------
     return {
       load, refresh, fit, focus, updateSize,
+      onChange: (fn) => listeners.push(fn),
+      /** 滚动区域的几何：缩放、偏移、当前滚动位置、可视宽度、被面板遮住的宽度 */
+      metrics: () => ({ k: box.k, offX: offX(), scrollLeft: viewport.scrollLeft, scrollWidth: viewport.scrollWidth,
+        clientWidth: viewport.clientWidth, inset: opts.getInset() }),
+      /** 当前显示出来的各列（按 x 从左到右）：{ left: 世界坐标, type, titles } */
+      columns() {
+        const cols = new Map();
+        for (const n of state.graph.nodes) {
+          const el = els.get(n.id); if (el.style.display === "none") continue;
+          const key = Math.round(el.offsetLeft);
+          if (!cols.has(key)) cols.set(key, { left: key, problems: 0, titles: [] });
+          const c = cols.get(key); if (n.type === "problem") c.problems++; c.titles.push(n.title);
+        }
+        return [...cols.values()].sort((a, b) => a.left - b.left)
+          .map((c) => ({ left: c.left, type: c.problems * 2 >= c.titles.length ? "problem" : "solution", titles: c.titles }));
+      },
+      /** 某节点中心在滚动区域里的 x 坐标；被折叠隐藏时返回 null */
+      nodeCenterX(id) { const el = els.get(id); return el.style.display === "none" ? null : offX() + (el.offsetLeft + el.offsetWidth / 2) * box.k; },
       /** 节点当前的左上角坐标；被折叠隐藏的返回 null（给键盘导航用） */
       posOf(id) { const el = els.get(id); return el.style.display === "none" ? null : { x: el.offsetLeft, y: el.offsetTop }; },
       setRecall: (on) => viewport.classList.toggle("is-recall", on),

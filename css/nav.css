@@ -1,0 +1,11 @@
+/* 底部导航条：列段（问题 / 方案两色交替）+ 视野框 + 聚焦指针 */
+.nav { position: fixed; left: 0; bottom: 0; right: 0; height: 32px; z-index: 6; background: var(--card); border-top: 1px solid var(--line-soft); user-select: none; }
+.nav__track { position: absolute; left: 0; right: 0; top: 9px; bottom: 0; cursor: pointer; touch-action: none; }
+.nav__seg { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; overflow: hidden;
+  font-size: 11px; font-weight: 600; letter-spacing: .5px; color: var(--tint); background: var(--tint-bg); border-bottom: 3px solid var(--tint);
+  border-right: 1px solid var(--card); white-space: nowrap; }
+.nav__thumb { position: absolute; top: 0; bottom: 0; z-index: 2; box-sizing: border-box; pointer-events: none;
+  border: 2px solid var(--accent); border-radius: 4px; background: var(--accent-soft); opacity: .55; }
+.nav__pointer { position: absolute; top: 1px; z-index: 3; width: 0; height: 0; margin-left: -6px; pointer-events: none;
+  border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--mute); transition: left .18s ease; }
+.nav__pointer.is-node { border-top-color: var(--accent); }

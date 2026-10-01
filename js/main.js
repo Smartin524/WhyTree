@@ -33,6 +33,9 @@
     onFoldToggle() { canvas.refresh(); canvas.fit(); }
   });
 
+  const nav = WT.NavBar(canvas);
+  nav.setSelected(() => state.selected);
+
   // ---------- 动作 ----------
   /** 点击 / 键盘到达一个节点；回忆模式下，未揭晓的方案第一次只揭晓、不打开详情 */
   function activate(id) {
