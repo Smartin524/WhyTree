@@ -40,6 +40,7 @@
 index.html          页面骨架 + 脚本加载顺序（新增主题在这里加一行 <script>）
 icons/              favicon.svg 与各尺寸透明 PNG（由 tools/make_icons.py 生成）
 tools/make_icons.py  重新生成 PNG；带参数时同时生成 .icns
+tools/set_example.py 批量改写节点的 example 字段
 topics/             内容。只有数据，没有逻辑
   concepts.js         概念库（跨主题共用）
   basics.js sequence.js cuda.js agent.js transformer.js redis.js   各主题
@@ -65,4 +66,4 @@ js/
 - 没有构建步骤、没有依赖，普通 `<script>` 加载（没用 ES module，是为了双击 `index.html` 在任何浏览器里都能直接打开）。
 
 ## 节点字段速查
-`brief` 一句话 · `detail` 展开讲 · `example` 具体例子（保留换行，写真实句子、命令、数字）· `analogy` 打个比方 · `points` 要点 · `concepts` 用到的小知识 · `kind`（仅问题）问题类型
+`brief` 一句话 · `detail` 展开讲 · `example` 具体例子（保留换行、等宽显示；尽量让同一个玩具数据贯穿多个节点，用“【接上一步】”衔接）· `analogy` 打个比方 · `points` 要点 · `concepts` 用到的小知识 · `kind`（仅问题）问题类型

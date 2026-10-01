@@ -20,7 +20,8 @@
 .sec p { margin: 0; }
 
 .callout { padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--bg); border-radius: 0 6px 6px 0; }
-.example { padding: 10px 12px; border: 1px dashed var(--line); border-radius: 6px; background: var(--bg); white-space: pre-line; font-size: 14px; line-height: 1.7; }
+.example { padding: 10px 12px; border: 1px dashed var(--line); border-radius: 6px; background: var(--bg); white-space: pre-wrap; overflow-x: auto;
+  font: 13px/1.75 ui-monospace, "SF Mono", Menlo, Consolas, "PingFang SC", monospace; }   /* 等宽：表格和对齐的数字才不会歪 */
 .points { margin: 0; padding-left: 18px; }
 
 .chip { margin: 0 6px 6px 0; padding: 2px 12px; border-radius: 14px; font-size: 13px; }
