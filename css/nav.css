@@ -7,5 +7,5 @@
 .nav__thumb { position: absolute; top: -3px; bottom: -3px; z-index: 2; box-sizing: border-box; pointer-events: none;
   border: 2px solid var(--ink); border-radius: 999px; background: rgba(127, 127, 127, .12); }
 .nav__pointer { position: absolute; top: -12px; z-index: 3; width: 0; height: 0; margin-left: -5px; pointer-events: none;
-  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--mute); transition: left .18s ease; }
-.nav__pointer.is-node { border-top-color: var(--accent); }
+  border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--mute); }   /* 跟随视野时不做动画，才不会比视野框慢半拍 */
+.nav__pointer.is-node { border-top-color: var(--accent); transition: left .18s ease; }   /* 只有跳到选中节点时才缓动 */
