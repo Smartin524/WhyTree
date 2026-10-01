@@ -149,8 +149,12 @@
       function view(s) {
         const fw = forward(P, X[xi]);
         if (s === "setup") return [
-          h("div", { class: "lab__col" }, card("网络结构（当前参数）", drawNet(P, "params", xi)), card("目标：拟合这 4 个点", drawFit(P, false))),
+          h("div", { class: "lab__col" }, card("网络结构（当前参数）", drawNet(P, "params", xi)), card("目标：让蓝色曲线（预测 y）穿过黑点（答案 t）", drawFit(P, false))),
           h("div", { class: "lab__col" },
+            card("我们的目的", h("p", null, h("b", null, "让网络的预测 y，尽量贴近每个点的答案 t。")),
+              h("p", null, "也就是：x = −2 时 y 要接近 2，x = −1 时接近 1，x = 1 时接近 1，x = 2 时接近 2。"),
+              table(["x", "答案 t", "当前预测 y", "差距 y − t"], X.map((x, i) => { const y = forward(P, x).y; return [String(x).replace("-", "−"), T[i], f2(y), f2(y - T[i])]; })),
+              h("p", null, `衡量“贴近”的方法是损失 L = 4 个差距平方的平均，现在 L = ${f(meanLoss(P), 3)}。训练的全部目的：把 L 变小，也就是让右边那一列“差距”都趋近于 0。`)),
             card("这是个什么问题", h("p", null, "4 个数据点连起来是个 V 形（其实就是 t = |x|，但网络并不知道）。我们给网络 7 个参数，让它自己找出一组参数，使曲线穿过这 4 个点。"),
               calc(["隐藏层：h₁ = ReLU(w₁·x + b₁)", "　　　　h₂ = ReLU(w₂·x + b₂)", "输　出：y = v₁·h₁ + v₂·h₂ + c"]),
               h("p", null, "现在的参数是随便取的（右表）。蓝色曲线就是它现在的“理解”，和黑点差得很远。"),
