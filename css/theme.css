@@ -1,0 +1,26 @@
+/* 设计变量：所有颜色只在这里定义，别处一律引用变量 */
+:root {
+  color-scheme: light dark;
+  --bg: #f6f4ef; --grid: #dcd8cd; --ink: #25221c; --mute: #6f695b;
+  --card: #fffdf8; --line: #b9b2a2; --line-soft: #e4dfd2;
+  --accent: #2b59c3; --accent-soft: #e8eefc;
+  --p: #c8532f; --p-bg: #fdeee8; --p-line: #eab3a1;   /* 问题：暖红 */
+  --s: #1f7a63; --s-bg: #e6f4ee; --s-line: #a3d2c2;   /* 方案：青绿 */
+  --radius: 10px; --bar-h: 48px;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.06); --shadow-hover: 0 4px 14px rgba(0,0,0,.14);
+  --shadow-panel: -6px 0 20px rgba(0,0,0,.08);
+  --font: -apple-system, "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1916; --grid: #2b2924; --ink: #ece8dd; --mute: #a39d8c;
+    --card: #24221e; --line: #5b564a; --line-soft: #35322b;
+    --accent: #8aa8f0; --accent-soft: #232c45;
+    --p: #ef8b68; --p-bg: #3a2620; --p-line: #7a4332;
+    --s: #5fc4a5; --s-bg: #1d332c; --s-line: #2f6455;
+  }
+}
+
+/* 类型着色：给任何元素加 is-problem / is-solution，它就拿到 --tint 系列变量 */
+.is-problem { --tint: var(--p); --tint-bg: var(--p-bg); --tint-line: var(--p-line); }
+.is-solution { --tint: var(--s); --tint-bg: var(--s-bg); --tint-line: var(--s-line); }

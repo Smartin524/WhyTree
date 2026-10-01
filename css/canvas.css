@@ -1,0 +1,28 @@
+/* 画布内部：世界坐标系、连线、节点卡片 */
+.world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }   /* 位置与缩放由 js/canvas.js 的 fit() 设置 */
+.edges { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: visible; pointer-events: none; }
+.edge { fill: none; stroke: var(--line); stroke-width: 1.6; }
+.edge--solves { stroke: var(--s); opacity: .55; }
+.edge--causes { stroke: var(--p); opacity: .55; stroke-dasharray: 5 4; }
+.edge.is-hl { opacity: 1; stroke-width: 2.6; }
+.world.has-focus .edge:not(.is-hl) { opacity: .12; }
+
+.node { position: absolute; width: 260px; padding: 10px 12px 10px 14px; border-radius: var(--radius); cursor: pointer;
+  user-select: none; box-shadow: var(--shadow-card); background: var(--tint-bg); border: 1.5px solid var(--tint-line);
+  border-left: 5px solid var(--tint); }
+.node:hover { box-shadow: var(--shadow-hover); }
+.node.is-selected { outline: 2.5px solid var(--accent); outline-offset: 2px; }
+.node.is-match { outline: 2.5px dashed #e0a100; outline-offset: 2px; }
+.world.has-focus .node:not(.is-hl) { opacity: .3; }
+.node__kind { font-size: 11px; font-weight: 600; letter-spacing: .5px; color: var(--tint); }
+.node__kind i { font-style: normal; font-weight: 400; color: var(--mute); margin-left: 6px; }
+.node h3 { margin: 2px 0 4px; font-size: 14.5px; line-height: 1.35; }
+.node p { margin: 0; color: var(--mute); font-size: 12.5px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }   /* 卡片只放摘要，全文在右侧面板 */
+.node__tags { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; }
+.node__fold { position: absolute; right: -11px; top: 50%; margin-top: -11px; width: 22px; height: 22px; padding: 0;
+  border-radius: 50%; font-size: 11px; line-height: 20px; text-align: center; }
+
+/* 回忆模式：遮住未揭晓的方案 */
+.viewport.is-recall .node.is-solution:not(.is-revealed) :is(h3, p, .node__tags) { filter: blur(7px); }
+.viewport.is-recall .node.is-solution:not(.is-revealed)::after { content: "点击揭晓"; position: absolute; inset: 0;
+  display: grid; place-items: center; color: var(--s); font-weight: 600; }

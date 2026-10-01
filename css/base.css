@@ -1,0 +1,9 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--ink);
+  font: 14px/1.5 var(--font); }
+button, input, textarea, select { font: inherit; color: var(--ink); }
+button, input, textarea { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tag { font-size: 11px; padding: 0 6px; border-radius: 9px; background: rgba(127,127,127,.15); color: var(--mute); }
