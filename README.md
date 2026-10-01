@@ -44,7 +44,7 @@ tools/make_icons.py  重新生成 PNG；带参数时同时生成 .icns
 tools/set_example.py 批量改写节点的 example 字段
 topics/             内容。只有数据，没有逻辑
   concepts.js         概念库（跨主题共用）
-  basics.js sequence.js cuda.js agent.js transformer.js redis.js   各主题
+  basics.js sequence.js cuda.js agent.js transformer.js llm.js redis.js   各主题
 css/
   theme.css           颜色等设计变量，以及 is-problem / is-solution 着色规则
   base.css            按钮、输入框等基础样式
@@ -60,7 +60,7 @@ js/
   panel.js            右侧详情 / 概念页
   charts.js           图表封装（基于 ECharts，统一读 theme.css 的配色，深色模式自动跟随）
   lab.js              「交互演练」全屏页的外壳（步骤标签、打开/关闭）
-  labs/               各个演练：nn-vcurve（正向→损失→反向→更新→训练）、vanish（梯度消失/爆炸）
+  labs/               各个演练：nn-vcurve（正向→损失→反向→更新→训练）、vanish（梯度消失/爆炸）、optimizers（SGD / 动量 / Adam 赛跑）
   main.js             共享状态，把以上各块和工具栏连起来
 ```
 
