@@ -34,6 +34,18 @@
     return el;
   };
 
+  /** SVG 版的 h()：svg("rect", {x:1, class:"a"}, 子元素或文字...) */
+  WT.svg = function svg(tag, attrs, ...kids) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const [k, v] of Object.entries(attrs || {})) if (v != null && v !== false) el.setAttribute(k, v);
+    const add = (c) => {
+      if (c == null || c === false) return;
+      if (Array.isArray(c)) c.forEach(add); else el.append(c.nodeType ? c : document.createTextNode(c));
+    };
+    kids.forEach(add);
+    return el;
+  };
+
   /** localStorage 的安全封装（隐私模式等情况会抛错，这里吞掉） */
   WT.store = {
     get(key, fallback) {

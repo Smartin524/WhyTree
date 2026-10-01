@@ -50,12 +50,15 @@ css/
   layout.css          顶栏、画布视口
   canvas.css          节点卡片、连线、回忆模式
   panel.css           右侧面板
+  lab.css             交互演练页
 js/
   util.js             配置(WT.config)、h() DOM 构造、localStorage 封装
   dropdown.js         自绘下拉（菜单展开在按钮正下方，支持键盘）
   graph.js            图模型 + 自动布局（纯计算，不碰 DOM）
   canvas.js           画布渲染、适应窗口高度、横向滚动、折叠
   panel.js            右侧详情 / 概念页
+  lab.js              「交互演练」全屏页的外壳（步骤标签、打开/关闭）
+  labs/               各个演练：nn-vcurve（正向→损失→反向→更新→训练）、vanish（梯度消失/爆炸）
   main.js             共享状态，把以上各块和工具栏连起来
 ```
 
@@ -67,3 +70,9 @@ js/
 
 ## 节点字段速查
 `brief` 一句话 · `detail` 展开讲 · `example` 具体例子（保留换行、等宽显示；尽量让同一个玩具数据贯穿多个节点，用“【接上一步】”衔接）· `analogy` 打个比方 · `points` 要点 · `concepts` 用到的小知识 · `kind`（仅问题）问题类型
+
+## 交互演练（Lab）
+当一个玩具例子要跨好几个节点连续讲时，文字例子容易“每个框都重写一遍”。这时给节点加 `lab: { id: "nn-vcurve", step: "forward" }`，面板里就会出现「打开交互演练」按钮，直接跳到演练页对应的那一步。
+- 演练页里所有数字都是页面实时计算的，和文字例子是同一个网络，各步骤共用同一份状态（先正向、再算损失、再反向、再更新、再反复训练）。
+- 新增演练：在 `js/labs/` 里写一个文件，用 `WT.Lab.register(id, { title, desc, steps, mount })` 注册，再在 `index.html` 里加一行 `<script>`。
+- 画图用的是 `WT.svg()`（SVG 版的 `h()`），没有引入任何第三方库。

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="css/layout.css">
 <link rel="stylesheet" href="css/canvas.css">
 <link rel="stylesheet" href="css/panel.css">
+<link rel="stylesheet" href="css/lab.css">
 </head>
 <body>
 <header class="bar">
@@ -24,6 +25,7 @@
   </label>
   <span class="bar__sep"></span>
   <div class="bar__spacer"></div>
+  <button id="btnLab" title="打开交互演练：用同一组数字一步步走完正向、反向、训练">交互演练</button>
   <button id="btnRecall" title="把方案遮住，先自己想怎么解决，再点开核对">回忆模式</button>
   <button id="btnCollapse" title="折叠 / 展开全部">全部折叠</button>
   <button id="btnFit" title="重新适应窗口大小，并回到最左边">适应</button>
@@ -39,6 +41,7 @@
 </main>
 
 <aside id="panel" class="panel" hidden></aside>
+<div id="lab" class="lab" hidden></div>
 
 <!-- 内容：概念库 + 各主题。新增主题只需在这里加一行 -->
 <script src="topics/concepts.js"></script>
@@ -54,6 +57,9 @@
 <script src="js/dropdown.js"></script>
 <script src="js/graph.js"></script>
 <script src="js/canvas.js"></script>
+<script src="js/lab.js"></script>
+<script src="js/labs/nn-vcurve.js"></script>
+<script src="js/labs/vanish.js"></script>
 <script src="js/panel.js"></script>
 <script src="js/main.js"></script>
 </body>

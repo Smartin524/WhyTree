@@ -6,7 +6,7 @@
    * @param state     共享状态
    * @param topics    所有主题（概念页要列出“哪些节点用到了它”）
    * @param concepts  概念库
-   * @param actions   { onGo(topicId, nodeId), onClose(), onNote(id, text), onResize() }
+   * @param actions   { onGo(topicId, nodeId), onClose(), onNote(id, text), onResize(), onLab(lab) }
    */
   WT.Panel = function Panel(state, topics, concepts, actions) {
     const el = $("#panel");
@@ -62,6 +62,8 @@
       const body = h("div", { class: "panel__scroll", onclick: onBodyClick },
         section(isProblem ? "为什么会冒出这个问题" : "它到底是怎么做的", h("p", null, n.detail || "")),
         n.example && section("举个具体的例子", h("div", { class: "example" }, n.example)),
+        n.lab && WT.Lab.describe(n.lab) && section("交互演练",
+          h("button", { class: "lab-link", onclick: () => actions.onLab(n.lab) }, WT.Lab.describe(n.lab))),
         n.analogy && section("打个比方", h("div", { class: "callout" }, n.analogy)),
         n.points?.length > 0 && section("记住这几点", h("ul", { class: "points" }, n.points.map((p) => h("li", null, p)))),
         concept.length > 0 && section("里面用到的小知识",

@@ -22,7 +22,8 @@
     onGo: goTo,
     onClose: () => select(null),
     onNote(id, text) { state.notes[id] = text; persist.notes(); },
-    onResize: () => canvas?.updateSize()
+    onResize: () => canvas?.updateSize(),
+    onLab: (lab) => WT.Lab.open(lab.id, lab.step)
   });
 
   const canvas = WT.Canvas(state, {
@@ -65,6 +66,7 @@
   const topicMenu = WT.Dropdown($("#topic"), topics.map((t) => ({ value: t.id, label: t.title })), loadTopic);
 
   $("#btnFit").onclick = () => { canvas.fit(); $("#viewport").scrollTo({ left: 0, top: 0, behavior: "smooth" }); };
+  $("#btnLab").onclick = () => WT.Lab.open();
   $("#btnRecall").onclick = (e) => {
     state.recall = !state.recall; state.revealed.clear();
     e.currentTarget.classList.toggle("is-on", state.recall);
@@ -97,7 +99,8 @@
     return nearest(g.nodes.map((n) => n.id), (p) => Math.abs(p.x - from.x) < 20 && (p.y - from.y) * sign > 0);
   }
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") return select(null);
+    if (e.key === "Escape") return WT.Lab.isOpen() ? WT.Lab.close() : select(null);
+    if (WT.Lab.isOpen()) return;
     const typing = /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
     if (typing || !state.selected || e.metaKey || e.ctrlKey || e.altKey) return;
     if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) return;
