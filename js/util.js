@@ -13,7 +13,8 @@
   WT.$ = (sel, root = document) => root.querySelector(sel);
 
   /** 极简 DOM 构造：h("div", {class:"a", onclick:fn, dataset:{id:1}}, "文字", 子元素...)
-   *  文字一律走 textNode，所以不需要手动转义，也不会被注入。 */
+   *  文字一律走 textNode，所以不需要手动转义，也不会被注入。
+   *  注意：子元素里的 0 会被当成文字显示；写 `cond && h(...)` 时，cond 必须是布尔值（用 `n > 0`，不要直接用 `arr.length`）。 */
   WT.h = function h(tag, props, ...kids) {
     const el = document.createElement(tag);
     for (const [k, v] of Object.entries(props || {})) {
