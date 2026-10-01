@@ -39,6 +39,7 @@
 ```
 index.html          页面骨架 + 脚本加载顺序（新增主题在这里加一行 <script>）
 icons/              favicon.svg 与各尺寸透明 PNG（由 tools/make_icons.py 生成）
+vendor/echarts/     第三方：Apache ECharts 5.6.0（Apache-2.0，含 LICENSE / NOTICE）。本地文件，离线可用
 tools/make_icons.py  重新生成 PNG；带参数时同时生成 .icns
 tools/set_example.py 批量改写节点的 example 字段
 topics/             内容。只有数据，没有逻辑
@@ -57,6 +58,7 @@ js/
   graph.js            图模型 + 自动布局（纯计算，不碰 DOM）
   canvas.js           画布渲染、适应窗口高度、横向滚动、折叠
   panel.js            右侧详情 / 概念页
+  charts.js           图表封装（基于 ECharts，统一读 theme.css 的配色，深色模式自动跟随）
   lab.js              「交互演练」全屏页的外壳（步骤标签、打开/关闭）
   labs/               各个演练：nn-vcurve（正向→损失→反向→更新→训练）、vanish（梯度消失/爆炸）
   main.js             共享状态，把以上各块和工具栏连起来
@@ -75,4 +77,5 @@ js/
 当一个玩具例子要跨好几个节点连续讲时，文字例子容易“每个框都重写一遍”。这时给节点加 `lab: { id: "nn-vcurve", step: "forward" }`，面板里就会出现「打开交互演练」按钮，直接跳到演练页对应的那一步。
 - 演练页里所有数字都是页面实时计算的，和文字例子是同一个网络，各步骤共用同一份状态（先正向、再算损失、再反向、再更新、再反复训练）。
 - 新增演练：在 `js/labs/` 里写一个文件，用 `WT.Lab.register(id, { title, desc, steps, mount })` 注册，再在 `index.html` 里加一行 `<script>`。
-- 画图用的是 `WT.svg()`（SVG 版的 `h()`），没有引入任何第三方库。
+- 结构示意图用 `WT.svg()`（SVG 版的 `h()`）手画；曲线、散点、柱状图用 `WT.Chart.create(高度, (主题色, 坐标轴样式) => ECharts 配置)`，之后画热力图（如注意力权重）等也直接用它。
+- 依赖只有 `vendor/echarts/` 一个本地文件，没有联网请求。升级时从 jsDelivr 下载新版并核对官方 SHA-256。

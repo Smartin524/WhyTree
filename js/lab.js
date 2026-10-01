@@ -18,6 +18,7 @@
 
   function close() {
     current?.destroy?.(); current = null;
+    WT.Chart.disposeAll();
     const el = $("#lab"); el.hidden = true; el.replaceChildren();
   }
   const isOpen = () => !$("#lab").hidden;
@@ -25,6 +26,7 @@
   function open(id, step) {
     const el = $("#lab");
     current?.destroy?.(); current = null;
+    WT.Chart.disposeAll();
     if (!id || !labs[id]) return openPicker();
     const def = labs[id];
     let stepKey = step && stepTitle(def, step) ? step : def.steps[0].key;

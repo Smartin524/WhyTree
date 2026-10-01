@@ -22,20 +22,19 @@
     return layers;
   }
 
+  /** 柱子 = 梯度传到这一层时还剩多少。纵轴是“10 的几次方”：0 = 出发时的 1，向下 = 缩小，向上 = 放大 */
   function drawBars(layers) {
-    const N = layers.length, W = 620, bw = Math.min(26, (W - 70) / N - 3), base = 125;
-    const px = (i) => 56 + i * ((W - 70) / N);
-    const unit = 110 / 8;   // 纵向：每 10 倍 = unit 像素，最多显示 ±8 个数量级
-    return svg("svg", { viewBox: `0 0 ${W} 270`, role: "img" },
-      [-8, -4, 0, 4, 8].map((e) => [svg("line", { x1: 50, x2: W - 6, y1: base - e * unit, y2: base - e * unit, class: e === 0 ? "svg-axis" : "svg-grid" }),
-        svg("text", { x: 44, y: base - e * unit + 4, "text-anchor": "end", "font-size": 11, class: "svg-mute" }, e === 0 ? "1" : `1e${e}`)]),
-      layers.map((L, i) => {
-        const e = Math.max(-8, Math.min(8, Math.log10(Math.max(Math.abs(L.grad), 1e-300)))), hgt = Math.abs(e) * unit;
-        return [svg("rect", { x: px(i), width: bw, y: e >= 0 ? base - hgt : base, height: Math.max(1, hgt), class: e >= 0 ? "svg-bar-up" : "svg-bar-down" }),
-          svg("text", { x: px(i) + bw / 2, y: 252, "text-anchor": "middle", "font-size": 10, class: "svg-mute" }, i + 1)];
-      }),
-      svg("text", { x: W / 2, y: 266, "text-anchor": "middle", "font-size": 11, class: "svg-mute" }, "第几层（左边是输入层，右边是输出层）"),
-      svg("text", { x: W - 8, y: 14, "text-anchor": "end", "font-size": 12 }, "柱子 = 梯度传到这一层时还剩多少（对数刻度）"));
+    return WT.Chart.create(300, (t, ax) => ({
+      grid: { left: 8, right: 18, top: 30, bottom: 30, containLabel: true },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" },
+        formatter: (q) => `第 ${q[0].dataIndex + 1} 层<br/>梯度 ${fmt(layers[q[0].dataIndex].grad)}<br/>本层系数 r = ${fmt(layers[q[0].dataIndex].r)}` },
+      xAxis: { type: "category", data: layers.map((_, i) => i + 1), name: "第几层（左：输入层，右：输出层）", nameLocation: "middle", nameGap: 28, ...ax },
+      yAxis: { type: "value", min: -8, max: 8, interval: 4, ...ax, axisLabel: { color: t.mute, formatter: (v) => (v === 0 ? "1" : `1e${v}`) } },
+      series: [{ type: "bar", barCategoryGap: "25%", data: layers.map((L) => {
+          const e = Math.max(-8, Math.min(8, Math.log10(Math.max(Math.abs(L.grad), 1e-300))));
+          return { value: +e.toFixed(3), itemStyle: { color: e >= 0 ? t.p : t.s, borderRadius: e >= 0 ? [4, 4, 0, 0] : [0, 0, 4, 4] } };
+        }) }]
+    }));
   }
 
   WT.Lab.register("vanish", {
@@ -50,6 +49,7 @@
       function render() {
         const layers = run(N, act, w), last = layers[0], rAvg = Math.exp(layers.reduce((s, L) => s + Math.log(Math.max(Math.abs(L.r), 1e-300)), 0) / N);
         const verdict = rAvg < 0.9 ? `平均每层只留 ${rAvg.toFixed(2)} 倍 → 越传越小（梯度消失）` : rAvg > 1.1 ? `平均每层放大到 ${rAvg.toFixed(2)} 倍 → 越传越大（梯度爆炸）` : `平均每层 ${rAvg.toFixed(2)} 倍 → 基本能传得动`;
+        WT.Chart.disposeAll();
         host.replaceChildren(
           h("div", { class: "lab__col" }, h("section", { class: "lab__card" }, h("h3", null, "梯度倒着传回来，每层还剩多少"), drawBars(layers))),
           h("div", { class: "lab__col" },
@@ -75,6 +75,7 @@
               h("p", null, "④ ReLU、w=1.3 或 0.7：只要每层系数略大于或小于 1，几十层之后就爆炸或消失。"),
               h("p", null, "⑤ RNN 是同样的事，只不过“层”变成了“时间步”：同一个 w 反复相乘，序列越长，传回的梯度越小。LSTM 的“传送带”、ResNet 的“直通路”，都是为了让这个系数接近 1。")))
         );
+        WT.Chart.flush();
       }
       render();
     }

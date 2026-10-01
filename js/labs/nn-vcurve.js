@@ -88,29 +88,33 @@
 
   /** 数据点 + 当前网络给出的曲线。resid：画出每个点到曲线的误差线 */
   function drawFit(P, resid) {
-    const sx = (x) => 36 + (x + 3) / 6 * 300, sy = (y) => 220 - (y + 0.3) / 3.3 * 200;
-    const pts = []; for (let x = -3; x <= 3.001; x += 0.1) pts.push(`${sx(x)},${sy(Math.max(-0.3, Math.min(3, forward(P, x).y)))}`);
-    return svg("svg", { viewBox: "0 0 360 250", role: "img" },
-      [0, 1, 2, 3].map((y) => [svg("line", { x1: 36, x2: 336, y1: sy(y), y2: sy(y), class: "svg-grid" }),
-        svg("text", { x: 28, y: sy(y) + 4, "text-anchor": "end", "font-size": 11, class: "svg-mute" }, y)]),
-      [-3, -2, -1, 0, 1, 2, 3].map((x) => svg("text", { x: sx(x), y: 238, "text-anchor": "middle", "font-size": 11, class: "svg-mute" }, x)),
-      svg("line", { x1: sx(0), x2: sx(0), y1: 20, y2: 220, class: "svg-axis" }),
-      svg("polyline", { points: pts.join(" "), class: "svg-curve" }),
-      resid ? X.map((x, i) => svg("line", { x1: sx(x), x2: sx(x), y1: sy(T[i]), y2: sy(forward(P, x).y), class: "svg-resid" })) : null,
-      X.map((x, i) => svg("circle", { cx: sx(x), cy: sy(T[i]), r: 5.5, class: "svg-point" })),
-      svg("text", { x: 340, y: 14, "text-anchor": "end", "font-size": 12 }, "● 数据点　— 网络的曲线"));
+    return WT.Chart.create(270, (t, ax) => {
+      const curve = []; for (let x = -3; x <= 3.001; x += 0.05) curve.push([+x.toFixed(2), Math.max(-1, Math.min(3, forward(P, x).y))]);
+      return {
+        legend: { data: ["数据点", "网络的曲线"] },
+        tooltip: { trigger: "item", formatter: (q) => (q.seriesName === "数据点" ? `x = ${q.data[0]}，答案 t = ${q.data[1]}` : `x = ${q.data[0]}，网络输出 y = ${q.data[1].toFixed(2)}`) },
+        xAxis: { type: "value", min: -3, max: 3, interval: 1, ...ax },
+        yAxis: { type: "value", min: -1, max: 3, interval: 1, ...ax },
+        series: [
+          { name: "网络的曲线", type: "line", data: curve, showSymbol: false, lineStyle: { width: 3, color: t.accent }, z: 2 },
+          { name: "数据点", type: "scatter", data: X.map((x, i) => [x, T[i]]), symbolSize: 15, itemStyle: { color: t.ink, borderColor: t.card, borderWidth: 2 }, z: 5 },
+          ...(resid ? X.map((x, i) => ({ type: "line", silent: true, showSymbol: false, tooltip: { show: false }, z: 1,
+            data: [[x, T[i]], [x, forward(P, x).y]], lineStyle: { color: t.p, type: "dashed", width: 2 } })) : [])]
+      };
+    });
   }
 
   /** 损失随训练步数的变化（纵轴取对数，才看得出后期的缓慢下降） */
   function drawLoss(hist) {
-    const n = Math.max(10, hist.length - 1), lo = -4, hi = 0.3;
-    const sx = (i) => 40 + i / n * 296, sy = (l) => 20 + (hi - Math.max(lo, Math.log10(Math.max(l, 1e-12)))) / (hi - lo) * 170;
-    return svg("svg", { viewBox: "0 0 360 215", role: "img" },
-      [0, -1, -2, -3, -4].map((e) => [svg("line", { x1: 40, x2: 336, y1: sy(10 ** e), y2: sy(10 ** e), class: "svg-grid" }),
-        svg("text", { x: 34, y: sy(10 ** e) + 4, "text-anchor": "end", "font-size": 11, class: "svg-mute" }, e === 0 ? "1" : `1e${e}`)]),
-      svg("polyline", { points: hist.map((l, i) => `${sx(i)},${sy(l)}`).join(" "), class: "svg-curve" }),
-      svg("text", { x: 188, y: 208, "text-anchor": "middle", "font-size": 11, class: "svg-mute" }, `训练步数（共 ${hist.length - 1} 步）`),
-      svg("text", { x: 340, y: 14, "text-anchor": "end", "font-size": 12 }, `损失 = ${f(hist[hist.length - 1], 4)}`));
+    return WT.Chart.create(240, (t, ax) => ({
+      grid: { left: 8, right: 18, top: 36, bottom: 34, containLabel: true },
+      title: { text: `损失 = ${f(hist[hist.length - 1], 4)}`, right: 4, top: 0, textStyle: { fontSize: 13, fontWeight: 600, color: t.ink } },
+      tooltip: { trigger: "axis", formatter: (q) => `第 ${q[0].data[0]} 步<br/>损失 ${f(q[0].data[1], 5)}` },
+      xAxis: { type: "value", min: 0, max: Math.max(10, hist.length - 1), name: "训练步数", nameLocation: "middle", nameGap: 26, ...ax },
+      yAxis: { type: "log", logBase: 10, min: 1e-4, max: 2, ...ax, axisLabel: { color: t.mute, formatter: (v) => (v >= 1 ? v : `1e${Math.round(Math.log10(v))}`) } },
+      series: [{ type: "line", data: hist.map((l, i) => [i, Math.max(l, 1e-6)]), showSymbol: hist.length < 30, symbolSize: 7, clip: true,
+        lineStyle: { width: 3, color: t.accent }, itemStyle: { color: t.accent }, areaStyle: { color: t.accent, opacity: 0.1 } }]
+    }));
   }
 
   // ---------- 界面 ----------
@@ -135,7 +139,10 @@
         X.map((x, i) => h("button", { class: "lab__btn" + (i === xi ? " is-on" : ""), onclick: () => { xi = i; render(); } }, `x = ${String(x).replace("-", "−")}`)));
 
       function render() {
-        const s = api.step(); host.replaceChildren(...view(s));
+        const s = api.step();
+        WT.Chart.disposeAll();
+        host.replaceChildren(...view(s));
+        WT.Chart.flush();
       }
       api.onStep(() => { stop(); render(); });
 

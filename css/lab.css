@@ -46,3 +46,4 @@
 .lab-picker span { color: var(--mute); }
 .panel .lab-link { display: block; width: 100%; text-align: left; padding: 10px 14px; border-radius: var(--radius);
   border: 1px solid var(--accent); background: var(--accent-soft); font-weight: 600; }
+.chart { width: 100%; }
