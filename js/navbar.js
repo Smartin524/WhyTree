@@ -7,9 +7,10 @@
   WT.NavBar = function NavBar(canvas) {
     const viewport = $("#viewport");
     const thumb = h("div", { class: "nav__thumb" });
-    const track = h("div", { class: "nav__track" }, thumb);
+    const bar = h("div", { class: "nav__bar" });                      // 胶囊本体：裁圆角，里面放各列色块
     const pointer = h("div", { class: "nav__pointer" });
-    const el = h("nav", { class: "nav", "aria-label": "位置导航" }, pointer, track);
+    const track = h("div", { class: "nav__track" }, bar, thumb, pointer);   // 指针、视野框与色块共用同一坐标系
+    const el = h("nav", { class: "nav", "aria-label": "位置导航" }, track);
     document.body.append(el);
 
     let dirty = true, segs = [], selected = () => null;
@@ -25,9 +26,9 @@
       segs.forEach((s) => s.remove());
       segs = cols.map((c, i) => {
         const seg = h("div", { class: `nav__seg ${typeClass({ type: c.type })}`, dataset: { i },
-          title: `${c.type === "problem" ? "问题" : "方案"}（${c.titles.length} 个）\n${c.titles.join("\n")}` }, c.type === "problem" ? "问题" : "方案");
+          title: `${c.type === "problem" ? "问题" : "方案"}（${c.titles.length} 个）\n${c.titles.join("\n")}` });
         seg.style.left = sx(start[i]) + "px"; seg.style.width = Math.max(2, sx(end[i]) - sx(start[i])) + "px";
-        track.append(seg); return seg;
+        bar.append(seg); return seg;
       });
       dirty = false;
     }
